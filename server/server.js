@@ -49,18 +49,17 @@ app.get('/script.js', function (req, res) {
 
 app.use('/client', express.static(__dirname + '/client'));
 
-var server = app.listen(3000, function () {
-    var host = server.address().address;
-    var port = server.address().port;
-    console.log('Example app listening at http://%s:%s', host, port);
-});
+// var server = app.listen(3000, function () {
+//     var host = server.address().address;
+//     var port = server.address().port;
+//     console.log('Example app listening at http://%s:%s', host, port);
+// });
 
-// your express configuration here
-// var key = fs.readFileSync('./key.pem');
-// var cert = fs.readFileSync('./cert.pem')
-// var credentials = {key: key, cert: cert};
-// var httpServer = http.createServer(app);
-// var httpsServer = https.createServer(credentials, app);
+var key = fs.readFileSync('./ssl/key.pem');
+var cert = fs.readFileSync('./ssl/cert.pem')
+var credentials = {key: key, cert: cert};
+var httpServer = http.createServer(app);
+var httpsServer = https.createServer(credentials, app);
 
-// httpServer.listen(3000);
-// httpsServer.listen(443);
+httpServer.listen(3000);
+httpsServer.listen(3300);
