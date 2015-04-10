@@ -1,5 +1,5 @@
 var xhr = new XMLHttpRequest();
-xhr.open('GET', 'http://localhost:3000');
+xhr.open('GET', 'https://localhost:3300');
 xhr.responseType = 'blob';
 xhr.onload = function()
 {
@@ -32,4 +32,3 @@ xhr.onload = function()
 	}, 5000);
 };
 xhr.send();
-alert('loaded');
