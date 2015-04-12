@@ -1,9 +1,158 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title></title>
+	<meta charset="utf-8">
+	<title>Chotot auto post</title>
+	<link rel="stylesheet" type="text/css" href="bower_components/bootstrap/dist/css/bootstrap-theme.min.css">
+	<link rel="stylesheet" type="text/css" href="bower_components/bootstrap/dist/css/bootstrap.min.css">
+	<script type="text/javascript" src="bower_components/jquery/dist/jquery.min.js"></script>
+	<script type="text/javascript" src="bower_components/angular/angular.min.js"></script>
+	<script type="text/javascript" src="bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+	<script type="text/javascript" src="bower_components/underscore/underscore-min.js"></script>
+	<script type="text/javascript" src="scripts/data.js"></script>
+	<script type="text/javascript" src="scripts/main.js"></script>
+	<style type="text/css">
+	.form-group {
+		margin-bottom: 5px;
+	}
+	</style>
 </head>
 <body>
-HELLO
+	<div ng-app="myApp" ng-controller="myCtrl" style="width: 960px;margin-left: auto;margin-right: auto; border: 1px solid gray; overflow: hidden">
+		<h2>Quản lý nội dung</h2>
+		<div class="col-md-3" style="background: gray">
+			
+		</div>
+		<form class="form-horizontal col-md-9">
+			<h3 style="color:gray">Thông tin liên hệ</h3>
+			<div class="form-group">
+				<label class="col-sm-2 control-label">SDT:</label>
+				<div class="col-sm-10">
+					<input class="form-control">
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-sm-2 control-label">Mật khẩu:</label>
+				<div class="col-sm-10">
+					<input type="password" class="form-control">
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-sm-2 control-label">Tên:</label>
+				<div class="col-sm-10">
+					<input class="form-control">
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-sm-2 control-label">E-mail:</label>
+				<div class="col-sm-10">
+					<input class="form-control">
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-sm-2 control-label">Địa chỉ:</label>
+				<div class="col-sm-10">
+					<input class="form-control">
+				</div>
+			</div>
+			<h3 style="color:gray">Nội dung tin</h3>
+			<div class="form-group">
+				<label class="col-sm-2 control-label">Vùng:</label>
+				<div class="col-sm-10">
+					<select ng-change="regionSelect()" class="form-control" ng-options="region.id as region.name.vi for region in regions | orderBy:'name.vi'" ng-model="regionSelected">
+						<option value="">«Chọn vùng»</option>
+					</select>
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-sm-2 control-label">Tỉnh:</label>
+				<div class="col-sm-10">
+					<select class="form-control" ng-options="province.id as province.name for province in provinces | orderBy:'name'" ng-model="provinceSelected">
+						<option value="">«Chọn tỉnh</option>
+					</select>
+				</div>
+			</div>			
+			<div class="form-group">
+				<label class="col-sm-2 control-label">Chuyên mục:</label>
+				<div class="col-sm-10">
+					<select class="form-control" ng-options="categ.id as categ.name group by categ.parentName for categ in categs | orderBy:'parentName'" ng-model="categSelected">
+						<option value="">«Chọn danh mục»</option>
+					</select>
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-sm-2 control-label">Bạn là:</label>
+				<div class="col-sm-10">
+					<label class="radio-inline">
+						<input type="radio" name="inlineRadioOptions" id="inlineRadio1" value="option1"> Cá nhân
+					</label>
+					<label class="radio-inline">
+						<input type="radio" name="inlineRadioOptions" id="inlineRadio2" value="option2"> Công ty
+					</label>
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-sm-2 control-label">Tựa đề:</label>
+				<div class="col-sm-10">
+					<input class="form-control">
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-sm-2 control-label">Nội dung:</label>
+				<div class="col-sm-10">
+					<input class="form-control">
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-sm-2 control-label">Giá:</label>
+				<div class="col-sm-10">
+					<input class="form-control">
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-sm-2 control-label">Quy trình:</label>
+				<div class="col-sm-10">
+					<input class="form-control">
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-sm-2 control-label">Hình 1:</label>
+				<div class="col-sm-10">
+					<input class="form-control">
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-sm-2 control-label">Hình 2:</label>
+				<div class="col-sm-10">
+					<input class="form-control">
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-sm-2 control-label">Hình 3:</label>
+				<div class="col-sm-10">
+					<input class="form-control">
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-sm-2 control-label">Hình 4:</label>
+				<div class="col-sm-10">
+					<input class="form-control">
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-sm-2 control-label">Hình 5:</label>
+				<div class="col-sm-10">
+					<input class="form-control">
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-sm-2 control-label">Hình 6:</label>
+				<div class="col-sm-10">
+					<input class="form-control">
+				</div>
+			</div>
+			<button ng-click="done()">Done</button>
+		</form>
+	</div>
 </body>
 </html>
