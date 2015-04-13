@@ -1,8 +1,32 @@
 var app = angular.module('myApp', []);
-app.controller('myCtrl', function($scope) {
-	$scope.categSelected = false;
-	$scope.regionSelected = false;
-	$scope.provinceSelected = false;
+app.controller('myCtrl', function($scope, $http) {
+	$scope.post = {
+		name: "Hoang Thanh Tung",
+		email: "hoangtung.utc@gmail.com",
+		phone: "01656100062",
+		pass: "123456",
+		seller_addr: "Ha Noi",
+		category_group: "",
+		region: "",
+		area: "",
+		seller_type: "p_ad", //p_ad: Ca nhan, c_ad: Cong ty
+		type: "rs", //rs: Can ban/tim nguoi/cung cap, rk: Can mua/tim viec/can tim, ru: Cho thue, rh: Can thue
+		condition: "condition_ad_used", //condition_ad_used: Da su dung, condition_ad_new: Moi
+		regdate: "", //nam dang ky
+		mileage: "", //So km da di
+		subject: "",
+		body: "",
+		price: "",
+		image_0: false,
+		image_1: false,
+		image_2: false,
+		image_3: false,
+		image_4: false,
+		image_5: false,
+		payment_delivery: ""
+	}
+
+	$scope.files = [{}, {}, {}, {}, {}, {}];
 	$scope.categs = (function(categs) {
 		var result = [];
 
@@ -42,10 +66,37 @@ app.controller('myCtrl', function($scope) {
 
 	$scope.regionSelect = function() {
 		$scope.provinces = _.find($scope.regions, function(elm) {
-			return elm.id === $scope.regionSelected;
+			return elm.id == $scope.post.region;
 		}).municipality;
 		$scope.provinces = _.map($scope.provinces, function(elm) {
 			return elm;
 		});
+	};
+
+	$scope.done = function() {
+		console.log($scope.post);
+		$http.post("https://localhost:3300/api/post", {
+			data: $scope.post
+		}).success(function(result) {
+			console.log(result);
+		});
 	}
-});
+}).directive("file", [function () {
+    return {
+        scope: {
+            file: "="
+        },
+        link: function (scope, element, attributes) {
+            element.bind("change", function (changeEvent) {
+            	scope.file = changeEvent.target.files[0].name;
+                // var reader = new FileReader();
+                // reader.onload = function (loadEvent) {
+                //     scope.$apply(function () {
+                //         scope.file = loadEvent.target.result;
+                //     });
+                // }
+                // reader.readAsDataURL(changeEvent.target.files[0]);
+            });
+        }
+    }
+}]);

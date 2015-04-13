@@ -3,6 +3,12 @@ var fs = require('fs');
 var app = express();
 var http = require('http');
 var https = require('https');
+var post = require('./post.js');
+var bodyParser = require('body-parser');
+
+app.use(bodyParser.json({limit: '50mb'}));
+app.use(bodyParser.urlencoded({limit: '50mb', extended: true}));
+app.use(bodyParser());
 
 app.all('*', function(req, res, next) {
        res.header("Access-Control-Allow-Origin", "*");
@@ -47,13 +53,13 @@ app.get('/script.js', function (req, res) {
     });
 });
 
-app.use('/client', express.static(__dirname + '/client'));
+app.post('/api/post', function (req, res) {
+    post(req.param('data'), function() {
+        res.end();
+    });
+});
 
-// var server = app.listen(3000, function () {
-//     var host = server.address().address;
-//     var port = server.address().port;
-//     console.log('Example app listening at http://%s:%s', host, port);
-// });
+app.use('/client', express.static(__dirname + '/client'));
 
 var key = fs.readFileSync('./ssl/key.pem');
 var cert = fs.readFileSync('./ssl/key.crt')

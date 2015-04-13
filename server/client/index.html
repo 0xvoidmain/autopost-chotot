@@ -23,136 +23,175 @@
 		<div class="col-md-3" style="background: gray">
 			
 		</div>
-		<form class="form-horizontal col-md-9">
+		<div class="form-horizontal col-md-9">
 			<h3 style="color:gray">Thông tin liên hệ</h3>
 			<div class="form-group">
-				<label class="col-sm-2 control-label">SDT:</label>
-				<div class="col-sm-10">
-					<input class="form-control">
+				<label class="col-sm-3 control-label">SDT:</label>
+				<div class="col-sm-9">
+					<input class="form-control" ng-model="post.phone">
 				</div>
 			</div>
 			<div class="form-group">
-				<label class="col-sm-2 control-label">Mật khẩu:</label>
-				<div class="col-sm-10">
-					<input type="password" class="form-control">
+				<label class="col-sm-3 control-label">Mật khẩu:</label>
+				<div class="col-sm-9">
+					<input type="password" class="form-control" ng-model="post.pass">
 				</div>
 			</div>
 			<div class="form-group">
-				<label class="col-sm-2 control-label">Tên:</label>
-				<div class="col-sm-10">
-					<input class="form-control">
+				<label class="col-sm-3 control-label">Tên:</label>
+				<div class="col-sm-9">
+					<input class="form-control" ng-model="post.name">
 				</div>
 			</div>
 			<div class="form-group">
-				<label class="col-sm-2 control-label">E-mail:</label>
-				<div class="col-sm-10">
-					<input class="form-control">
+				<label class="col-sm-3 control-label">E-mail:</label>
+				<div class="col-sm-9">
+					<input class="form-control" ng-model="post.email">
 				</div>
 			</div>
 			<div class="form-group">
-				<label class="col-sm-2 control-label">Địa chỉ:</label>
-				<div class="col-sm-10">
-					<input class="form-control">
+				<label class="col-sm-3 control-label">Địa chỉ:</label>
+				<div class="col-sm-9">
+					<input class="form-control" ng-model="post.seller_addr">
 				</div>
 			</div>
 			<h3 style="color:gray">Nội dung tin</h3>
 			<div class="form-group">
-				<label class="col-sm-2 control-label">Vùng:</label>
-				<div class="col-sm-10">
-					<select ng-change="regionSelect()" class="form-control" ng-options="region.id as region.name.vi for region in regions | orderBy:'name.vi'" ng-model="regionSelected">
+				<label class="col-sm-3 control-label">Vùng:</label>
+				<div class="col-sm-9">
+					<select ng-change="regionSelect()" class="form-control" ng-options="region.id as region.name.vi for region in regions | orderBy:'name.vi'" ng-model="post.region">
 						<option value="">«Chọn vùng»</option>
 					</select>
 				</div>
 			</div>
 			<div class="form-group">
-				<label class="col-sm-2 control-label">Tỉnh:</label>
-				<div class="col-sm-10">
-					<select class="form-control" ng-options="province.id as province.name for province in provinces | orderBy:'name'" ng-model="provinceSelected">
+				<label class="col-sm-3 control-label">Tỉnh:</label>
+				<div class="col-sm-9">
+					<select class="form-control" ng-options="province.id as province.name for province in provinces | orderBy:'name'" ng-model="post.area">
 						<option value="">«Chọn tỉnh</option>
 					</select>
 				</div>
 			</div>			
 			<div class="form-group">
-				<label class="col-sm-2 control-label">Chuyên mục:</label>
-				<div class="col-sm-10">
-					<select class="form-control" ng-options="categ.id as categ.name group by categ.parentName for categ in categs | orderBy:'parentName'" ng-model="categSelected">
+				<label class="col-sm-3 control-label">Chuyên mục:</label>
+				<div class="col-sm-9">
+					<select class="form-control" ng-options="categ.id as categ.name group by categ.parentName for categ in categs | orderBy:'parentName'" ng-model="post.category_group">
 						<option value="">«Chọn danh mục»</option>
 					</select>
 				</div>
 			</div>
 			<div class="form-group">
-				<label class="col-sm-2 control-label">Bạn là:</label>
-				<div class="col-sm-10">
+				<label class="col-sm-3 control-label">Bạn là:</label>
+				<div class="col-sm-9">
 					<label class="radio-inline">
-						<input type="radio" name="inlineRadioOptions" id="inlineRadio1" value="option1"> Cá nhân
+						<input type="radio" ng-model="post.seller_type" name="youare" value="p_ad"> Cá nhân
 					</label>
 					<label class="radio-inline">
-						<input type="radio" name="inlineRadioOptions" id="inlineRadio2" value="option2"> Công ty
+						<input type="radio" ng-model="post.seller_type" name="youare" value="c_ad"> Công ty
 					</label>
 				</div>
 			</div>
 			<div class="form-group">
-				<label class="col-sm-2 control-label">Tựa đề:</label>
-				<div class="col-sm-10">
-					<input class="form-control">
+				<label class="col-sm-3 control-label">Bạn đăng tin:</label>
+				<div class="col-sm-9">
+					<label class="radio-inline">
+						<input type="radio" ng-model="post.type" name="posttype" value="rs"> Cần bán/Tìm người/Cung cấp
+					</label>
+					<label class="radio-inline">
+						<input type="radio" ng-model="post.type" name="posttype" value="rk"> Cần mua/Tìm việc/Cần tìm
+					</label>
 				</div>
 			</div>
 			<div class="form-group">
-				<label class="col-sm-2 control-label">Nội dung:</label>
-				<div class="col-sm-10">
-					<input class="form-control">
+				<label class="col-sm-3 control-label"></label>
+				<div class="col-sm-9">
+					<label class="radio-inline">
+						<input type="radio" ng-model="post.type" name="posttype" value="ru"> Cho thuê
+					</label>
+					<label class="radio-inline">
+						<input type="radio" ng-model="post.type" name="posttype" value="rh"> Cần thuê
+					</label>
 				</div>
 			</div>
 			<div class="form-group">
-				<label class="col-sm-2 control-label">Giá:</label>
-				<div class="col-sm-10">
-					<input class="form-control">
+				<label class="col-sm-3 control-label">Tình trạng</label>
+				<div class="col-sm-9">
+					<label class="radio-inline">
+						<input type="radio" ng-model="post.condition" name="condition" value="condition_ad_used"> Đã sử dụng
+					</label>
+					<label class="radio-inline">
+						<input type="radio" ng-model="post.condition" name="condition" value="condition_ad_new"> Mới
+					</label>
 				</div>
 			</div>
 			<div class="form-group">
-				<label class="col-sm-2 control-label">Quy trình:</label>
-				<div class="col-sm-10">
-					<input class="form-control">
+				<label class="col-sm-3 control-label">Tựa đề:</label>
+				<div class="col-sm-9">
+					<input class="form-control" ng-model="post.subject">
 				</div>
 			</div>
 			<div class="form-group">
-				<label class="col-sm-2 control-label">Hình 1:</label>
-				<div class="col-sm-10">
-					<input class="form-control">
+				<label class="col-sm-3 control-label">Nội dung:</label>
+				<div class="col-sm-9">
+					<input class="form-control" ng-model="post.body">
 				</div>
 			</div>
 			<div class="form-group">
-				<label class="col-sm-2 control-label">Hình 2:</label>
-				<div class="col-sm-10">
-					<input class="form-control">
+				<label class="col-sm-3 control-label">Giá:</label>
+				<div class="col-sm-9">
+					<input class="form-control" ng-model="post.price">
 				</div>
 			</div>
 			<div class="form-group">
-				<label class="col-sm-2 control-label">Hình 3:</label>
-				<div class="col-sm-10">
-					<input class="form-control">
+				<label class="col-sm-3 control-label">Quy trình:</label>
+				<div class="col-sm-9">
+					<input class="form-control" ng-model="post.payment_delivery">
+				</div>
+			</div>
+			<!--  -->
+			<div class="form-group">
+				<label class="col-sm-3 control-label">Hình 1:</label>
+				<div class="col-sm-9">
+					<input class="form-control" type="file" accept='image/*' file="post.image_0">
 				</div>
 			</div>
 			<div class="form-group">
-				<label class="col-sm-2 control-label">Hình 4:</label>
-				<div class="col-sm-10">
-					<input class="form-control">
+				<label class="col-sm-3 control-label">Hình 2:</label>
+				<div class="col-sm-9">
+					<input class="form-control" type="file" accept='image/*' file="post.image_1">
 				</div>
 			</div>
 			<div class="form-group">
-				<label class="col-sm-2 control-label">Hình 5:</label>
-				<div class="col-sm-10">
-					<input class="form-control">
+				<label class="col-sm-3 control-label">Hình 3:</label>
+				<div class="col-sm-9">
+					<input class="form-control" type="file" accept='image/*' file="post.image_2">
 				</div>
 			</div>
 			<div class="form-group">
-				<label class="col-sm-2 control-label">Hình 6:</label>
-				<div class="col-sm-10">
-					<input class="form-control">
+				<label class="col-sm-3 control-label">Hình 4:</label>
+				<div class="col-sm-9">
+					<input class="form-control" type="file" accept='image/*' file="post.image_3">
 				</div>
 			</div>
-			<button ng-click="done()">Done</button>
-		</form>
+			<div class="form-group">
+				<label class="col-sm-3 control-label">Hình 5:</label>
+				<div class="col-sm-9">
+					<input class="form-control" type="file" accept='image/*' file="post.image_4">
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-sm-3 control-label">Hình 6:</label>
+				<div class="col-sm-9">
+					<input class="form-control" type="file" accept='image/*' file="post.image_5">
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-sm-3 control-label"></label>
+				<div class="col-sm-9">
+					<button type="button" class="btn btn-primary" ng-click="done()">Hoàn thành</button>
+				</div>
+			</div>
+		</div>
 	</div>
 </body>
 </html>
