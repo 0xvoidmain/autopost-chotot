@@ -15,13 +15,33 @@
 	.form-group {
 		margin-bottom: 5px;
 	}
+	.uppercase {
+		text-transform: uppercase;
+	}
+	.blue {
+		color: blue;
+	}
+	.post-item {
+		cursor: pointer;
+	}
+	.post-item:hover {
+		background: gray;
+	}
+	.active {
+		background: gray;
+	}
 	</style>
 </head>
 <body>
 	<div ng-app="myApp" ng-controller="myCtrl" style="width: 960px;margin-left: auto;margin-right: auto; border: 1px solid gray; overflow: hidden">
 		<h2>Quản lý nội dung</h2>
-		<div class="col-md-3" style="background: gray">
-			
+		<div class="col-md-3">
+			<div class="post-item" ng-class="{'active':p == post}" ng-repeat="p in post_list" ng-click="selectPost(p)">
+				<div style="margin: 5px;">
+					<div class="uppercase blue">{{p.subject === "" ? "(No subject)" : p.subject}}</div>
+					<div>{{p.create_time | time}}</div>
+				</div>
+			</div>
 		</div>
 		<div class="form-horizontal col-md-9">
 			<h3 style="color:gray">Thông tin liên hệ</h3>
@@ -56,6 +76,12 @@
 				</div>
 			</div>
 			<h3 style="color:gray">Nội dung tin</h3>
+			<div class="form-group">
+				<label class="col-sm-3 control-label">Thời gian post:</label>
+				<div class="col-sm-9">
+					<input class="form-control" ng-model="post.post_time">
+				</div>
+			</div>
 			<div class="form-group">
 				<label class="col-sm-3 control-label">Vùng:</label>
 				<div class="col-sm-9">
@@ -189,6 +215,7 @@
 				<label class="col-sm-3 control-label"></label>
 				<div class="col-sm-9">
 					<button type="button" class="btn btn-primary" ng-click="done()">Hoàn thành</button>
+					<button type="button" class="btn btn-primary" ng-click="reset()">Tạo mới</button>
 				</div>
 			</div>
 		</div>

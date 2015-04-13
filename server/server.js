@@ -6,64 +6,103 @@ var https = require('https');
 var post = require('./post.js');
 var bodyParser = require('body-parser');
 
-app.use(bodyParser.json({limit: '50mb'}));
-app.use(bodyParser.urlencoded({limit: '50mb', extended: true}));
+http.ServerResponse.prototype.respond = function(content, status) {
+	if ('undefined' == typeof status) { // only one parameter found
+		if ('number' == typeof content || !isNaN(parseInt(content, 10))) { // usage "respond(status)"
+			status = parseInt(content, 10);
+			content = undefined;
+		} else { // usage "respond(content)"
+			status = 200;
+		}
+	}
+	if (status != 200) { // error
+		content = {
+			"code": status,
+			"status": http.STATUS_CODES[status],
+			"message": content && content.toString() || null
+		};
+	}
+	this.setHeader('Content-Type', 'application/json');
+	this.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+	this.setHeader("Pragma", "no-cache");
+	this.setHeader("Expires", 0);
+	this.send(content, status);
+};
+
+app.use(bodyParser.json({
+	limit: '50mb'
+}));
+app.use(bodyParser.urlencoded({
+	limit: '50mb',
+	extended: true
+}));
 app.use(bodyParser());
 
 app.all('*', function(req, res, next) {
-       res.header("Access-Control-Allow-Origin", "*");
-       res.header("Access-Control-Allow-Headers", "X-Requested-With");
-       res.header('Access-Control-Allow-Headers', 'Content-Type');
-       next();
-});
-app.get('/', function (req, res) {
-  	var filePath = "./images/xemay.jpg";
-    var stat = fs.statSync(filePath);
-    
-    res.writeHead(200, {
-        'Content-Type': 'image/png', 
-        'Content-Length': stat.size
-    });
-    
-    var readStream = fs.createReadStream(filePath);
-    readStream.on('data', function(data) {
-        res.write(data);
-    });
-    
-    readStream.on('end', function() {
-        res.end();        
-    });
-});
-app.get('/script.js', function (req, res) {
-   	var filePath = './script.js';
-    var stat = fs.statSync(filePath);
-    
-    res.writeHead(200, {
-        'Content-Type': 'text/javascript', 
-        'Content-Length': stat.size
-    });
-    
-    var readStream = fs.createReadStream(filePath);
-    readStream.on('data', function(data) {
-        res.write(data);
-    });
-    
-    readStream.on('end', function() {
-        res.end();        
-    });
+	res.header("Access-Control-Allow-Origin", "*");
+	res.header("Access-Control-Allow-Headers", "X-Requested-With");
+	res.header('Access-Control-Allow-Headers', 'Content-Type');
+	next();
 });
 
-app.post('/api/post', function (req, res) {
-    post(req.param('data'), function() {
-        res.end();
-    });
+app.get('/', function(req, res) {
+	var filePath = "./images/xemay.jpg";
+	var stat = fs.statSync(filePath);
+
+	res.writeHead(200, {
+		'Content-Type': 'image/png',
+		'Content-Length': stat.size
+	});
+
+	var readStream = fs.createReadStream(filePath);
+	readStream.on('data', function(data) {
+		res.write(data);
+	});
+
+	readStream.on('end', function() {
+		res.end();
+	});
+});
+
+app.get('/script.js', function(req, res) {
+	var filePath = './script.js';
+	var stat = fs.statSync(filePath);
+
+	res.writeHead(200, {
+		'Content-Type': 'text/javascript',
+		'Content-Length': stat.size
+	});
+
+	var readStream = fs.createReadStream(filePath);
+	readStream.on('data', function(data) {
+		res.write(data);
+	});
+
+	readStream.on('end', function() {
+		res.end();
+	});
+});
+
+app.post('/api/post/update', function(req, res) {
+	post.insert(req.param('data'), function(result) {
+		res.respond(result);
+	});
+});
+
+app.post('/api/post/get', function(req, res) {
+	post.get(req.param('data'), function(result) {
+		res.respond(result);
+	});
 });
 
 app.use('/client', express.static(__dirname + '/client'));
 
 var key = fs.readFileSync('./ssl/key.pem');
 var cert = fs.readFileSync('./ssl/key.crt')
-var credentials = {key: key, cert: cert};
+var credentials = {
+	key: key,
+	cert: cert
+};
 var httpServer = http.createServer(app);
 var httpsServer = https.createServer(credentials, app);
 
