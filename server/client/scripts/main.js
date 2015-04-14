@@ -71,6 +71,7 @@ app.controller('myCtrl', function($scope, $http) {
 			return elm.id == $scope.post.region;
 		}).municipality;
 		$scope.provinces = _.map($scope.provinces, function(elm) {
+			elm.id = parseInt(elm.id);
 			return elm;
 		});
 	};
@@ -102,12 +103,12 @@ app.controller('myCtrl', function($scope, $http) {
 			subject: "",
 			body: "",
 			price: "",
-			image_0: false,
-			image_1: false,
-			image_2: false,
-			image_3: false,
-			image_4: false,
-			image_5: false,
+			image_0: "",
+			image_1: "",
+			image_2: "",
+			image_3: "",
+			image_4: "",
+			image_5: "",
 			payment_delivery: "",
 
 			//custom fields

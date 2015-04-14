@@ -21,24 +21,27 @@
 	.blue {
 		color: blue;
 	}
+	.red {
+		color: red;
+	}
 	.post-item {
 		cursor: pointer;
 	}
 	.post-item:hover {
-		background: gray;
+		background: rgb(240, 240, 240);
 	}
 	.active {
-		background: gray;
+		background: rgb(230, 230, 230);
 	}
 	</style>
 </head>
 <body>
-	<div ng-app="myApp" ng-controller="myCtrl" style="width: 960px;margin-left: auto;margin-right: auto; border: 1px solid gray; overflow: hidden">
+	<div ng-app="myApp" ng-controller="myCtrl" class="col-md-8">
 		<h2>Quản lý nội dung</h2>
 		<div class="col-md-3">
 			<div class="post-item" ng-class="{'active':p == post}" ng-repeat="p in post_list" ng-click="selectPost(p)">
 				<div style="margin: 5px;">
-					<div class="uppercase blue">{{p.subject === "" ? "(No subject)" : p.subject}}</div>
+					<div class="uppercase" ng-class="{'blue':p.posted, 'red':!p.posted}">{{p.subject === "" ? "(No subject)" : p.subject}}</div>
 					<div>{{p.create_time | time}}</div>
 				</div>
 			</div>
@@ -211,6 +214,7 @@
 					<input class="form-control" type="file" accept='image/*' file="post.image_5">
 				</div>
 			</div>
+			<br/>
 			<div class="form-group">
 				<label class="col-sm-3 control-label"></label>
 				<div class="col-sm-9">
@@ -218,6 +222,7 @@
 					<button type="button" class="btn btn-primary" ng-click="reset()">Tạo mới</button>
 				</div>
 			</div>
+			<br/>
 		</div>
 	</div>
 </body>

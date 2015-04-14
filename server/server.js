@@ -45,8 +45,8 @@ app.all('*', function(req, res, next) {
 	next();
 });
 
-app.get('/', function(req, res) {
-	var filePath = "./images/xemay.jpg";
+app.get('/image/:name', function(req, res) {
+	var filePath = "./images/" + req.params.name;
 	var stat = fs.statSync(filePath);
 
 	res.writeHead(200, {
@@ -92,6 +92,19 @@ app.post('/api/post/update', function(req, res) {
 app.post('/api/post/get', function(req, res) {
 	post.get(req.param('data'), function(result) {
 		res.respond(result);
+	});
+});
+
+app.get('/api/post/next', function(req, res) {
+	post.get({
+		posted: false
+	}, function(data) {
+		if (data && data.length > 0) {
+			res.respond(data[0]);
+		}
+		else {
+			res.respond(false);
+		}
 	});
 });
 

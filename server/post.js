@@ -3,6 +3,7 @@ var ObjectID = require('mongodb').ObjectID;
 
 var post = {};
 post.insert = function(post, callback) {
+	console.log(post);
 	//Config data
 	db(function(_db) {
 		var collection = _db.collection('post');
@@ -17,6 +18,7 @@ post.insert = function(post, callback) {
 		}
 		else {
 			post.create_time = (new Date()).getTime();
+			post.posted = false;
 			collection.insert(post, function() {
 				callback(post);
 			});
