@@ -143,7 +143,7 @@
 				</div>
 			</div>
 			<div class="form-group">
-				<label class="col-sm-3 control-label">Tình trạng</label>
+				<label class="col-sm-3 control-label">Tình trạng:</label>
 				<div class="col-sm-9">
 					<label class="radio-inline">
 						<input type="radio" ng-model="post.condition" name="condition" value="condition_ad_used"> Đã sử dụng
@@ -151,6 +151,58 @@
 					<label class="radio-inline">
 						<input type="radio" ng-model="post.condition" name="condition" value="condition_ad_new"> Mới
 					</label>
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-sm-3 control-label">Năm đăng ký:</label>
+				<div class="col-sm-9">
+					<select class="form-control" ng-model="post.regdate" ng-options="reg.value as reg.label for reg in regdates">
+						<option value="">«Chọn năm đăng ký»</option>
+					</select>
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-sm-3 control-label">Số Km đã đi:</label>
+				<div class="col-sm-9">
+					<select class="form-control" ng-model="post.mileage" ng-options="mil.value as mil.label for mil in mileages">
+						<option value="">«Chọn số km đã đi»</option>					 
+					</select>
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-sm-3 control-label">Hộp số:</label>
+				<div class="col-sm-9">
+					<select class="form-control" ng-model="post.gearbox" ng-options="gear.value as gear.label for gear in gearboxes">
+						<option value="">«Chọn hộp số»</option>					 
+					</select>
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-sm-3 control-label">Loại nhiên liệu:</label>
+				<div class="col-sm-9">
+					<select class="form-control" ng-model="post.fuel" ng-options="fuel.value as fuel.label for fuel in fuels">
+						<option value="">«Chọn loại nhiên liệu»</option>					 
+					</select>
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-sm-3 control-label">Địa chỉ:</label>
+				<div class="col-sm-9">
+					<input class="form-control" ng-model="post.address">
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-sm-3 control-label">Diện tích:</label>
+				<div class="col-sm-9">
+					<input class="form-control" ng-model="post.size">
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-sm-3 control-label">Số phòng:</label>
+				<div class="col-sm-9">
+					<select class="form-control" ng-model="post.rooms" ng-options="room.value as room.label for room in roomses">
+						<option value="">«Chọn»</option>					 
+					</select>
 				</div>
 			</div>
 			<div class="form-group">

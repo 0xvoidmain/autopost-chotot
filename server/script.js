@@ -57,13 +57,36 @@ function convertToScriptObject(post) {
 	}, {
 		id: post.condition,
 		value: true
+	}, {
+		id: 'payment_delivery',
+		value: post.payment_delivery
+	}, {
+		id: 'regdate',
+		value: post.regdate
+	}, {
+		id: 'mileage',
+		value: post.mileage
+	}, {
+		id: 'gearbox',
+		value: post.gearbox
+	}, {
+		id: 'fuel',
+		value: post.fuel
+	}, {
+		id: 'address',
+		value: post.address
+	}, {
+		id: 'rooms',
+		value: post.rooms
+	}, {
+		id: 'size',
+		value: post.size
 	}];
 
 	return obj;
 };
 
 function getPostImages(post) {
-
 	var obj = [{
 		id: 'image_0',
 		value: post.image_0
@@ -88,14 +111,16 @@ function getPostImages(post) {
 };
 
 function put(postScript, indexKey) {
-	if (indexKey < postScript.length) {
+	for (var indexKey = 0; indexKey < postScript.length; indexKey++) {
 		var key = postScript[indexKey];
+		var elm = $('#formular #' + key.id);
+		if (elm.length <= 0) {
+			elm = $('#formular input[name=' + key.id + ']');
+		}
 		if (typeof key.value === 'boolean') {
-			$('#' + key.id).click();
-			put(postScript, indexKey + 1);
+			elm.click();
 		} else if (typeof key.value === 'number' || typeof key.value === 'string') {
-			$('#' + key.id).val(key.value);
-			put(postScript, indexKey + 1);
+			elm.val(key.value);
 		}
 	}
 };
@@ -123,15 +148,14 @@ function checkDone(images, callback) {
 			var img = images[i];
 			if (img.value) {
 				var divimg = $('#dummy_' + img.id + ' .uploaded-images');
-				if (divimg.length < 0) {
+				if (divimg.length <= 0) {
 					callback(false);
 					return;
 				}
 			}
 		}
 		callback(true);
-	}
-	catch (ex) {
+	} catch (ex) {
 		callback(false);
 	}
 };
@@ -148,13 +172,15 @@ getPost(function(post) {
 		put(postScript, 0);
 	}, 500);
 
-	var id = setInterval(function() {
-		checkDone(images, function(result) {
-			if (result) {
-				$('input[name=validate]').click();
-				clearInterval(id);
-			}
-		})
-	}, 1000);
+	// var id = setInterval(function() {
+	// 	checkDone(images, function(result) {
+	// 		if (result) {
+	// 			setTimeout(function() {
+	// 				$('input[name=validate]').click();
+	// 			}, 1000);
+	// 			clearInterval(id);
+	// 		}
+	// 	})
+	// }, 1000);
 	putImage(images);
 });

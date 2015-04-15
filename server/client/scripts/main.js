@@ -11,6 +11,11 @@ app.controller('myCtrl', function($scope, $http) {
 		area: "",
 		regdate: "", //nam dang ky
 		mileage: "", //So km da di
+		gearbox: "", //Hop so
+		fuel: "", //Loai nhien lieu
+		address: "", //Dia chi
+		rooms: "", //So phong
+		size: "", //Dien tich
 		subject: "",
 		body: "",
 		price: "",
@@ -28,7 +33,6 @@ app.controller('myCtrl', function($scope, $http) {
 		condition: "condition_ad_used", //condition_ad_used: Da su dung, condition_ad_new: Moi
 		post_time: ""
 	};
-	$scope.files = [{}, {}, {}, {}, {}, {}];
 	$scope.categs = (function(categs) {
 		var result = [];
 
@@ -63,9 +67,77 @@ app.controller('myCtrl', function($scope, $http) {
 		}
 		return result;
 	})(regionArray);
+	$scope.regdates = (function(min, max) {
+		var result = [];
+		result.push({
+			value: min,
+			label: "trước năm " + min
+		});
+		for (var i = min + 1; i <= max; i++) {
+			result.push({
+				value: i,
+				label: i + ""
+			});
+		}
+		return result;
+	})(1980, 2015);
+	$scope.mileages = (function(min, max, delta) {
+		var result = [];
+		var value = 1;
+		for (var i = min; i < max; i += delta) {
+			result.push({
+				value: value++,
+				label: i + " - " + (i + delta)
+			});
+		}
+		result.push({
+			value: value,
+			label: "nhiều hơn " + max
+		});
+		result.push({
+			value: "desc",
+			label: ""
+		});
+		return result;
+	})(0, 500000, 5000);
 
+	$scope.roomses = (function(min, max) {
+		var result = [];
+		for (var i = min + 1; i <= max; i++) {
+			result.push({
+				value: i,
+				label: i + ""
+			});
+		}
+		result.push({
+			value: max + 1,
+			label: "nhiều hơn " + max
+		});
+		return result;
+	})(1, 10);
+
+	$scope.gearboxes = [{
+		value: 1,
+		label: "Tự động"
+	}, {
+		value: 2,
+		label: "Số tay"
+	}, {
+		value: 3,
+		label: "Cả hai"
+	}];
+	$scope.fuels = [{
+		value: 1,
+		label: "Xăng"
+	}, {
+		value: 2,
+		label: "Diesel"
+	}, {
+		value: 3,
+		label: "Hybrid xăng và điện"
+	}];
 	$scope.provinces = false;
-
+	$scope.post_list = [];
 	$scope.regionSelect = function() {
 		$scope.provinces = _.find($scope.regions, function(elm) {
 			return elm.id == $scope.post.region;
@@ -75,8 +147,6 @@ app.controller('myCtrl', function($scope, $http) {
 			return elm;
 		});
 	};
-
-	$scope.post_list = [];
 
 	$scope.done = function() {
 		$http.post("https://localhost:3300/api/post/update", {
@@ -117,7 +187,7 @@ app.controller('myCtrl', function($scope, $http) {
 			condition: "condition_ad_used", //condition_ad_used: Da su dung, condition_ad_new: Moi
 			post_time: ""
 		}
-	}
+	};
 
 	$scope.selectPost = function(post) {
 		$scope.post = post;
