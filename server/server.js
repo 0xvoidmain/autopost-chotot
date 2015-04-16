@@ -103,9 +103,30 @@ app.get('/api/post/next', function(req, res) {
 			res.respond(data[0]);
 		}
 		else {
-			res.respond(false);
+			res.end();
 		}
 	});
+});
+app.get('/api/post/done/:id', function(req, res) {
+	if (req.params.id) {
+		post.done(req.params.id, function() {
+			res.respond(true);
+		});
+	}
+	else {
+		req.end();
+	}
+});
+
+app.get('/api/post/delete/:id', function(req, res) {
+	if (req.params.id) {
+		post.delete(req.params.id, function() {
+			res.respond(true);
+		});
+	}
+	else {
+		req.end();
+	}
 });
 
 app.use('/client', express.static(__dirname + '/client'));

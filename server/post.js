@@ -3,8 +3,6 @@ var ObjectID = require('mongodb').ObjectID;
 
 var post = {};
 post.insert = function(post, callback) {
-	console.log(post);
-	//Config data
 	db(function(_db) {
 		var collection = _db.collection('post');
 		if (post._id) {
@@ -15,8 +13,7 @@ post.insert = function(post, callback) {
 			}, post, function() {
 				callback(post);
 			});
-		}
-		else {
+		} else {
 			post.create_time = (new Date()).getTime();
 			post.posted = false;
 			collection.insert(post, function() {
@@ -31,6 +28,34 @@ post.get = function(condition, callback) {
 		var collection = _db.collection('post');
 		collection.find(condition || {}).toArray(function(err, docs) {
 			callback(docs);
+		});
+	});
+};
+
+post.done = function(id, callback) {
+	db(function(_db) {
+		var collection = _db.collection('post');
+		var oid = new ObjectID(id);
+		collection.update({
+			_id: oid
+		}, {
+			$set: {
+				posted: true
+			}
+		}, function() {
+			callback();
+		});
+	});
+};
+
+post.delete = function(id, callback) {
+	db(function(_db) {
+		var collection = _db.collection('post');
+		var oid = new ObjectID(id);
+		collection.remove({
+			_id: oid
+		}, function() {
+			callback();
 		});
 	});
 };

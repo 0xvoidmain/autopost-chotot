@@ -191,7 +191,22 @@ app.controller('myCtrl', function($scope, $http) {
 
 	$scope.selectPost = function(post) {
 		$scope.post = post;
-	}
+	};
+
+	$scope.delete = function(id) {
+		$http.get("/api/post/delete/" + id)
+			.success(function() {
+				$scope.post_list = _.reject($scope.post_list, function(elm) {
+					return elm._id === id;
+				});
+			});
+	};
+
+	$scope.clone = function(post) {
+		$scope.post = JSON.parse(JSON.stringify(post));
+		delete $scope.post._id;
+		$scope.done();
+	};
 
 	$http.post("/api/post/get")
 		.success(function(post_list) {
@@ -205,13 +220,6 @@ app.controller('myCtrl', function($scope, $http) {
 		link: function(scope, element, attributes) {
 			element.bind("change", function(changeEvent) {
 				scope.file = changeEvent.target.files[0].name;
-				// var reader = new FileReader();
-				// reader.onload = function (loadEvent) {
-				//     scope.$apply(function () {
-				//         scope.file = loadEvent.target.result;
-				//     });
-				// }
-				// reader.readAsDataURL(changeEvent.target.files[0]);
 			});
 		}
 	}

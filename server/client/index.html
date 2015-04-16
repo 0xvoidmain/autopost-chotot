@@ -36,14 +36,17 @@
 	</style>
 </head>
 <body>
-	<div ng-app="myApp" ng-controller="myCtrl" class="col-md-8">
+	<div ng-app="myApp" ng-controller="myCtrl">
 		<h2>Quản lý nội dung</h2>
 		<div class="col-md-3">
-			<div class="post-item" ng-class="{'active':p == post}" ng-repeat="p in post_list" ng-click="selectPost(p)">
-				<div style="margin: 5px;">
+			<button type="button" class="btn btn-primary" ng-click="reset()">Tạo mới</button>
+			<div class="post-item" style="position: relative; border-bottom: 1px solid gray; padding: 10px;" ng-class="{'active':p == post}" ng-repeat="p in post_list">
+				<div ng-click="selectPost(p)" style="margin-right: 20px;" >
 					<div class="uppercase" ng-class="{'blue':p.posted, 'red':!p.posted}">{{p.subject === "" ? "(No subject)" : p.subject}}</div>
 					<div>{{p.create_time | time}}</div>
 				</div>
+				<button style="position: absolute; top: 5px; right: 5px;" type="button" class="btn btn-default btn-xs" ng-click="delete(p._id)">X</button>
+				<button style="position: absolute; bottom: 5px; right: 5px;" type="button" class="btn btn-default btn-xs" ng-click="clone(p)">C</button>
 			</div>
 		</div>
 		<div class="form-horizontal col-md-9">
@@ -271,7 +274,6 @@
 				<label class="col-sm-3 control-label"></label>
 				<div class="col-sm-9">
 					<button type="button" class="btn btn-primary" ng-click="done()">Hoàn thành</button>
-					<button type="button" class="btn btn-primary" ng-click="reset()">Tạo mới</button>
 				</div>
 			</div>
 			<br/>

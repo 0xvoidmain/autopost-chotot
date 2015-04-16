@@ -168,27 +168,45 @@ function checkDone(images, callback) {
 
 getPost(function(post) {
 	if (!post) {
+		alert('Finish!');
 		return
 	}
 	post = JSON.parse(post);
-	var images = getPostImages(post);
-	if ($('#name').val() !== post.name) {
-		put(step1(post));
+	var url = location.toString();
+	if (url.trim() === 'http://www.chotot.vn/') {
+		$('#sunny_post_newad_homepage').click();
+	}
+	else if (url.indexOf('chotot.vn/ai/form') >= 0) {
+		var images = getPostImages(post);
+		if ($('#name').val() !== post.name) {
+			put(step1(post));
+			setTimeout(function() {
+				$('input[name=validate]').click();
+			}, 1000);
+		} else {
+			putImage(images)
+			put(step2(post));
+			var id = setInterval(function() {
+				checkDone(images, function(result) {
+					if (result) {
+						setTimeout(function() {
+							//$('input[name=validate]').click();
+						}, 1000);
+						clearInterval(id);
+					}
+				})
+			}, 1000);
+		}
+	} else if (url.indexOf('chotot.vn/ai/preview') >= 0) {
+		$('#passwd_ver').val(post.pass);
 		setTimeout(function() {
-			$('input[name=validate]').click();
-		}, 1000);
-	} else {
-		putImage(images)
-		put(step2(post));
-		var id = setInterval(function() {
-			checkDone(images, function(result) {
-				if (result) {
-					setTimeout(function() {
-						//$('input[name=validate]').click();
-					}, 1000);
-					clearInterval(id);
-				}
-			})
-		}, 1000);
+			alert('Tạm thời không tự động click đăng vì không xóa được bài. Tới đây gần như là hoàn thành một quy trình tự động đăng bài.');
+			var xhr = new XMLHttpRequest();
+			xhr.open('GET', 'https://localhost:3300/api/post/done/' + post._id);
+			xhr.onload = function() {
+				alert('done');
+			};
+			xhr.send();
+		}, 500);
 	}
 });

@@ -20,7 +20,7 @@ function init() {
 }
 
 function updateOrCreateTab(func, tab) {
-	if (tab.url.indexOf('chotot.vn/ai/form') >= 0) {
+	if (tab.url.indexOf('.chotot.') >= 0) {
 		chrome.tabs.executeScript(null, {
 			file: 'script.js'
 		});
