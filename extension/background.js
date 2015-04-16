@@ -1,4 +1,4 @@
-var started = false;
+var started = true;
 
 function init() {
 	chrome.browserAction.onClicked.addListener(function(tab) {
@@ -14,7 +14,7 @@ function init() {
 	// });
 
 	chrome.tabs.onUpdated.addListener(function(tabid, options, tab) {
-		if (!started) return;
+		//if (!started) return;
 		updateOrCreateTab('update', tab);
 	});
 }

@@ -17,7 +17,7 @@ function getImage(id, name) {
 	xhr.send();
 };
 
-function convertToScriptObject(post) {
+function step1(post) {
 	var obj = [{
 		id: 'name',
 		value: post.name,
@@ -31,15 +31,6 @@ function convertToScriptObject(post) {
 		id: 'seller_addr',
 		value: post.seller_addr
 	}, {
-		id: 'category_group',
-		value: post.category_group
-	}, {
-		id: 'region',
-		value: post.region
-	}, {
-		id: 'area',
-		value: post.area
-	}, {
 		id: 'subject',
 		value: post.subject
 	}, {
@@ -49,17 +40,32 @@ function convertToScriptObject(post) {
 		id: 'price',
 		value: post.price
 	}, {
+		id: 'payment_delivery',
+		value: post.payment_delivery
+	}, {
+		id: 'category_group',
+		value: post.category_group
+	}, {
+		id: 'region',
+		value: post.region
+	}, {
 		id: post.seller_type,
 		value: true
+	}];
+
+	return obj;
+};
+
+function step2(post) {
+	var obj = [{
+		id: 'area',
+		value: post.area
 	}, {
 		id: post.type,
 		value: true
 	}, {
 		id: post.condition,
 		value: true
-	}, {
-		id: 'payment_delivery',
-		value: post.payment_delivery
 	}, {
 		id: 'regdate',
 		value: post.regdate
@@ -110,9 +116,9 @@ function getPostImages(post) {
 	return obj;
 };
 
-function put(postScript, indexKey) {
-	for (var indexKey = 0; indexKey < postScript.length; indexKey++) {
-		var key = postScript[indexKey];
+function put(postScript) {
+	for (var i = 0; i < postScript.length; i++) {
+		var key = postScript[i];
 		var elm = $('#formular #' + key.id);
 		if (elm.length <= 0) {
 			elm = $('#formular input[name=' + key.id + ']');
@@ -165,22 +171,24 @@ getPost(function(post) {
 		return
 	}
 	post = JSON.parse(post);
-	var postScript = convertToScriptObject(post);
 	var images = getPostImages(post);
-	put(postScript, 0);
-	setTimeout(function() {
-		put(postScript, 0);
-	}, 500);
-
-	// var id = setInterval(function() {
-	// 	checkDone(images, function(result) {
-	// 		if (result) {
-	// 			setTimeout(function() {
-	// 				$('input[name=validate]').click();
-	// 			}, 1000);
-	// 			clearInterval(id);
-	// 		}
-	// 	})
-	// }, 1000);
-	putImage(images);
+	if ($('#name').val() !== post.name) {
+		put(step1(post));
+		setTimeout(function() {
+			$('input[name=validate]').click();
+		}, 1000);
+	} else {
+		putImage(images)
+		put(step2(post));
+		var id = setInterval(function() {
+			checkDone(images, function(result) {
+				if (result) {
+					setTimeout(function() {
+						//$('input[name=validate]').click();
+					}, 1000);
+					clearInterval(id);
+				}
+			})
+		}, 1000);
+	}
 });
