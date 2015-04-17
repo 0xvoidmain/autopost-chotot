@@ -19,17 +19,17 @@ app.controller('myCtrl', function($scope, $http) {
 		subject: "",
 		body: "",
 		price: "",
-		image_0: false,
-		image_1: false,
-		image_2: false,
-		image_3: false,
-		image_4: false,
-		image_5: false,
+		image_0: "",
+		image_1: "",
+		image_2: "",
+		image_3: "",
+		image_4: "",
+		image_5: "",
 		payment_delivery: "",
 
 		//custom fields
 		seller_type: "p_ad", //p_ad: Ca nhan, c_ad: Cong ty
-		type: "rs", //rs: Can ban/tim nguoi/cung cap, rk: Can mua/tim viec/can tim, ru: Cho thue, rh: Can thue
+		type: "", //rs: Can ban/tim nguoi/cung cap, rk: Can mua/tim viec/can tim, ru: Cho thue, rh: Can thue
 		condition: "condition_ad_used", //condition_ad_used: Da su dung, condition_ad_new: Moi
 		post_time: ""
 	};
@@ -138,6 +138,7 @@ app.controller('myCtrl', function($scope, $http) {
 	}];
 	$scope.provinces = false;
 	$scope.post_list = [];
+	$scope.postTypes = [];
 	$scope.regionSelect = function() {
 		$scope.provinces = _.find($scope.regions, function(elm) {
 			return elm.id == $scope.post.region;
@@ -147,6 +148,20 @@ app.controller('myCtrl', function($scope, $http) {
 			return elm;
 		});
 	};
+
+	$scope.category_groupSelect = function() {
+		$scope.postTypes = [];
+		var postTypes = category_typeList[$scope.post.category_group];
+		for (var key in postTypes) {
+			$scope.postTypes.push({
+				key: key,
+				label: postTypes[key]
+			});
+		}
+		if ($scope.postTypes.length > 0) {
+			$scope.post.type = 'r' + $scope.postTypes[0].key;
+		}
+	}
 
 	$scope.done = function() {
 		$http.post("https://localhost:3300/api/post/update", {
@@ -232,5 +247,19 @@ app.controller('myCtrl', function($scope, $http) {
 			date.getHours() + ":" +
 			date.getMinutes() + ":" +
 			date.getSeconds();
-	}
+	};
+}).filter("show", function() {
+	return function(key, post) {
+		try {
+			var setting = category_settings[post.category_group];
+			var type = post.type[1];
+			if (setting[type].value.indexOf(key) >= 0) {
+				return true;
+			}
+			return false;
+		}
+		catch (ex) {
+			return false;
+		}
+	};
 });

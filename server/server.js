@@ -46,7 +46,8 @@ app.all('*', function(req, res, next) {
 });
 
 app.get('/image/:name', function(req, res) {
-	var filePath = "./images/" + req.params.name;
+	var b64string = req.params.name;
+	var filePath = new Buffer(b64string, 'base64').toString();
 	var stat = fs.statSync(filePath);
 
 	res.writeHead(200, {
@@ -101,8 +102,7 @@ app.get('/api/post/next', function(req, res) {
 	}, function(data) {
 		if (data && data.length > 0) {
 			res.respond(data[0]);
-		}
-		else {
+		} else {
 			res.end();
 		}
 	});
@@ -112,8 +112,7 @@ app.get('/api/post/done/:id', function(req, res) {
 		post.done(req.params.id, function() {
 			res.respond(true);
 		});
-	}
-	else {
+	} else {
 		req.end();
 	}
 });
@@ -123,8 +122,7 @@ app.get('/api/post/delete/:id', function(req, res) {
 		post.delete(req.params.id, function() {
 			res.respond(true);
 		});
-	}
-	else {
+	} else {
 		req.end();
 	}
 });

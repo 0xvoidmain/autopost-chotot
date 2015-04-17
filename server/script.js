@@ -1,11 +1,11 @@
 function getImage(id, name) {
 	var xhr = new XMLHttpRequest();
-	xhr.open('GET', 'https://localhost:3300/image/' + name);
+	xhr.open('GET', 'https://localhost:3300/image/' + btoa(name));
 	xhr.responseType = 'blob';
 	xhr.onload = function() {
 		var blob = xhr.response;
 		var img = $('#' + id)[0];
-		var file = new File([blob], name, {
+		var file = new File([blob], btoa(name) + ".png", {
 			lastModified: new Date(0),
 			type: "image/png"
 		});
@@ -178,7 +178,7 @@ getPost(function(post) {
 	}
 	else if (url.indexOf('chotot.vn/ai/form') >= 0) {
 		var images = getPostImages(post);
-		if ($('#name').val() !== post.name) {
+		if ($('#category_group').val() != post.category_group) {
 			put(step1(post));
 			setTimeout(function() {
 				$('input[name=validate]').click();
@@ -201,12 +201,12 @@ getPost(function(post) {
 		$('#passwd_ver').val(post.pass);
 		setTimeout(function() {
 			alert('Tạm thời không tự động click đăng vì không xóa được bài. Tới đây gần như là hoàn thành một quy trình tự động đăng bài.');
-			var xhr = new XMLHttpRequest();
-			xhr.open('GET', 'https://localhost:3300/api/post/done/' + post._id);
-			xhr.onload = function() {
-				alert('done');
-			};
-			xhr.send();
+			// var xhr = new XMLHttpRequest();
+			// xhr.open('GET', 'https://localhost:3300/api/post/done/' + post._id);
+			// xhr.onload = function() {
+			// 	alert('done');
+			// };
+			// xhr.send();
 		}, 500);
 	}
 });
