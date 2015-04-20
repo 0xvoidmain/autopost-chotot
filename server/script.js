@@ -1,6 +1,6 @@
 function getImage(id, name) {
 	var xhr = new XMLHttpRequest();
-	xhr.open('GET', 'https://localhost:3300/image/' + btoa(name));
+	xhr.open('GET', 'http://localhost:3000/image/' + btoa(name));
 	xhr.responseType = 'blob';
 	xhr.onload = function() {
 		var blob = xhr.response;
@@ -141,7 +141,7 @@ function putImage(images) {
 
 function getPost(callback) {
 	var xhr = new XMLHttpRequest();
-	xhr.open('GET', 'https://localhost:3300/api/post/next');
+	xhr.open('GET', 'http://localhost:3000/api/post/next');
 	xhr.onload = function() {
 		callback && callback(xhr.response);
 	};
@@ -175,8 +175,7 @@ getPost(function(post) {
 	var url = location.toString();
 	if (url.trim() === 'http://www.chotot.vn/') {
 		$('#sunny_post_newad_homepage').click();
-	}
-	else if (url.indexOf('chotot.vn/ai/form') >= 0) {
+	} else if (url.indexOf('chotot.vn/ai/form') >= 0) {
 		var images = getPostImages(post);
 		if ($('#category_group').val() != post.category_group) {
 			put(step1(post));
@@ -190,7 +189,7 @@ getPost(function(post) {
 				checkDone(images, function(result) {
 					if (result) {
 						setTimeout(function() {
-							//$('input[name=validate]').click();
+							$('input[name=validate]').click();
 						}, 1000);
 						clearInterval(id);
 					}
@@ -200,13 +199,13 @@ getPost(function(post) {
 	} else if (url.indexOf('chotot.vn/ai/preview') >= 0) {
 		$('#passwd_ver').val(post.pass);
 		setTimeout(function() {
-			alert('Tạm thời không tự động click đăng vì không xóa được bài. Tới đây gần như là hoàn thành một quy trình tự động đăng bài.');
-			// var xhr = new XMLHttpRequest();
-			// xhr.open('GET', 'https://localhost:3300/api/post/done/' + post._id);
-			// xhr.onload = function() {
-			// 	alert('done');
-			// };
-			// xhr.send();
+			var xhr = new XMLHttpRequest();
+			xhr.open('GET', 'http://localhost:3000/api/post/done/' + post._id + "_" + post.pmin.t);
+			xhr.onload = function() {
+				//alert('done');
+				//$('#ai_preview_submit').click();
+			};
+			xhr.send();
 		}, 500);
 	}
 });

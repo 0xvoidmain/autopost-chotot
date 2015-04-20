@@ -1,62 +1,79 @@
 var db = require('./db.js');
-var ObjectID = require('mongodb').ObjectID;
 
 var post = {};
 post.insert = function(post, callback) {
 	db(function(_db) {
-		var collection = _db.collection('post');
 		if (post._id) {
-			var oid = new ObjectID(post._id);
+			var id = post._id;
 			delete post._id;
-			collection.update({
-				_id: oid
-			}, post, function() {
-				callback(post);
-			});
+			_db.post.update({
+				_id: id
+			}, post);
+			callback(post);
 		} else {
 			post.create_time = (new Date()).getTime();
 			post.posted = false;
-			collection.insert(post, function() {
-				callback(post);
-			});
+			_db.post.save(post);
+			callback(post);
 		}
 	});
 };
 
 post.get = function(condition, callback) {
 	db(function(_db) {
-		var collection = _db.collection('post');
-		collection.find(condition || {}).toArray(function(err, docs) {
-			callback(docs);
-		});
+		callback(_db.post.find(condition || {}));
 	});
 };
 
-post.done = function(id, callback) {
+post.next = function(callback) {
 	db(function(_db) {
-		var collection = _db.collection('post');
-		var oid = new ObjectID(id);
-		collection.update({
-			_id: oid
-		}, {
-			$set: {
-				posted: true
-			}
-		}, function() {
-			callback();
+		var posts = _db.post.find({
+			posted: false
 		});
+
+		var postsMin = [];
+		posts.forEach(function(p) {
+			for (var i = 0; i < p.post_times.length; i++) {
+				if (p.post_times[i].m && !p.post_times[i].p) {
+					p.pmin = p.post_times[i];
+					postsMin.push(p);
+					break;
+				}
+			}
+		});
+		postsMin = postsMin.sort(function(p1, p2) {
+			return p1.pmin.t - p2.pmin.t;
+		});
+		callback(postsMin[0]);
+	});
+};
+
+post.done = function(id_time, callback) {
+	db(function(_db) {
+		var id = id_time.split("_")[0];
+		var time = id_time.split("_")[1];
+		var post = _db.post.findOne({
+			_id: id
+		});
+		for (var i = 0; i < post.post_times.length; i++) {
+			if (post.post_times[i].t == time) {
+				post.post_times[i].p = true;
+				break;
+			}
+		}
+		_db.post.update({
+			_id: id
+		}, post);
+		callback();
 	});
 };
 
 post.delete = function(id, callback) {
 	db(function(_db) {
-		var collection = _db.collection('post');
-		var oid = new ObjectID(id);
-		collection.remove({
-			_id: oid
-		}, function() {
-			callback();
+		_db.post.remove({
+			_id: id
 		});
+		callback();
 	});
 };
 

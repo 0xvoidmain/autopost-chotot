@@ -4,6 +4,7 @@ var app = express();
 var http = require('http');
 var https = require('https');
 var post = require('./post.js');
+var account = require('./account.js');
 var bodyParser = require('body-parser');
 
 http.ServerResponse.prototype.respond = function(content, status) {
@@ -90,18 +91,16 @@ app.post('/api/post/update', function(req, res) {
 	});
 });
 
-app.post('/api/post/get', function(req, res) {
-	post.get(req.param('data'), function(result) {
+app.post('/api/post/get/:phone', function(req, res) {
+	post.get({phone: req.params.phone}, function(result) {
 		res.respond(result);
 	});
 });
 
 app.get('/api/post/next', function(req, res) {
-	post.get({
-		posted: false
-	}, function(data) {
-		if (data && data.length > 0) {
-			res.respond(data[0]);
+	post.next(function(data) {
+		if (data) {
+			res.respond(data);
 		} else {
 			res.end();
 		}
@@ -120,6 +119,25 @@ app.get('/api/post/done/:id', function(req, res) {
 app.get('/api/post/delete/:id', function(req, res) {
 	if (req.params.id) {
 		post.delete(req.params.id, function() {
+			res.respond(true);
+		});
+	} else {
+		req.end();
+	}
+});
+app.post('/api/account/update', function(req, res) {
+	account.insert(req.param('data'), function(result) {
+		res.respond(result);
+	});
+});
+app.post('/api/account/get', function(req, res) {
+	account.get(req.param('data'), function(result) {
+		res.respond(result);
+	});
+});
+app.get('/api/account/delete/:id', function(req, res) {
+	if (req.params.id) {
+		account.delete(req.params.id, function() {
 			res.respond(true);
 		});
 	} else {

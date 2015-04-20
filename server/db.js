@@ -1,15 +1,9 @@
-var MongoClient = require('mongodb').MongoClient;
+var db = require('diskdb');
 
-function db(callback) {
-	var isConnected = false;
+function database(callback) {
 	var url = 'mongodb://localhost:27017/chototauto';
-	if (!isConnected) {
-		MongoClient.connect(url, function(err, db) {
-			if (db) {
-				callback(db);
-			}
-		});
-	}
+	db.connect('./db', ['post', 'account']);
+	callback(db);
 };
 
-module.exports = db;
+module.exports = database;
