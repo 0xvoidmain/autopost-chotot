@@ -1,10 +1,10 @@
 var app = angular.module('myApp', []);
 app.controller('myCtrl', function($scope, $http) {
-	$scope.post = {
-		name: "Hoang Thanh Tung",
-		email: "hoangtung.utc@gmail.com",
-		phone: "01656100062",
-		pass: "123456",
+	$scope.postTemp = {
+		name: "",
+		email: "",
+		phone: "",
+		pass: "",
 		seller_addr: "Ha Noi",
 		category_group: "",
 		region: "",
@@ -31,8 +31,23 @@ app.controller('myCtrl', function($scope, $http) {
 		seller_type: "p_ad", //p_ad: Ca nhan, c_ad: Cong ty
 		type: "", //rs: Can ban/tim nguoi/cung cap, rk: Can mua/tim viec/can tim, ru: Cho thue, rh: Can thue
 		condition: "condition_ad_used", //condition_ad_used: Da su dung, condition_ad_new: Moi
-		post_time: ""
+		post_times: (function() {
+			var result = [];
+			var current = new Date();
+			current.setHours(0);
+			current.setMinutes(30);
+			current.setSeconds(0);
+			while (current.getHours() < 23) {
+				current = new Date(current.getTime() + 1800000);
+				result.push({
+					t: current.getTime(),
+					m: false
+				});
+			}
+			return result;
+		})()
 	};
+	$scope.post = JSON.parse(JSON.stringify($scope.postTemp));
 	$scope.categs = (function(categs) {
 		var result = [];
 
@@ -138,7 +153,22 @@ app.controller('myCtrl', function($scope, $http) {
 	}];
 	$scope.provinces = false;
 	$scope.post_list = [];
+	$scope.account_list = [];
 	$scope.postTypes = [];
+	$scope.account = false;
+	$scope.accountSelect = function(acc) {
+		$scope.account = acc;
+		$scope.postTemp.name = acc.name;
+		$scope.postTemp.email = acc.email;
+		$scope.postTemp.phone = acc.phone;
+		$scope.postTemp.pass = acc.pass;
+		$scope.postTemp.seller_addr = acc.seller_addr;
+		$scope.post = JSON.parse(JSON.stringify($scope.postTemp));
+		$http.post("/api/post/get/" + $scope.account.phone)
+			.success(function(post_list) {
+				$scope.post_list = post_list;
+			});
+	};
 	$scope.regionSelect = function() {
 		$scope.provinces = _.find($scope.regions, function(elm) {
 			return elm.id == $scope.post.region;
@@ -148,7 +178,6 @@ app.controller('myCtrl', function($scope, $http) {
 			return elm;
 		});
 	};
-
 	$scope.category_groupSelect = function() {
 		$scope.postTypes = [];
 		var postTypes = category_typeList[$scope.post.category_group];
@@ -161,51 +190,46 @@ app.controller('myCtrl', function($scope, $http) {
 		if ($scope.postTypes.length > 0) {
 			$scope.post.type = 'r' + $scope.postTypes[0].key;
 		}
-	}
-
+	};
 	$scope.done = function() {
-		$http.post("https://localhost:3300/api/post/update", {
-			data: $scope.post
+		var post = JSON.parse(JSON.stringify($scope.post));
+		post.post_times.forEach(function(elm) {
+			delete elm['$$hashKey'];
+		});
+		$http.post("http://localhost:3000/api/post/update", {
+			data: post
 		}).success(function(result) {
 			if (!$scope.post._id) {
 				$scope.post_list.push(result);
+				$scope.post = result;
 			}
 		});
 	};
-
-	$scope.reset = function() {
-		$scope.post = {
-			name: "Hoang Thanh Tung",
-			email: "hoangtung.utc@gmail.com",
-			phone: "01656100062",
-			pass: "123456",
-			seller_addr: "Ha Noi",
-			category_group: "",
-			region: "",
-			area: "",
-			regdate: "", //nam dang ky
-			mileage: "", //So km da di
-			subject: "",
-			body: "",
-			price: "",
-			image_0: "",
-			image_1: "",
-			image_2: "",
-			image_3: "",
-			image_4: "",
-			image_5: "",
-			payment_delivery: "",
-
-			//custom fields
-			seller_type: "p_ad", //p_ad: Ca nhan, c_ad: Cong ty
-			type: "rs", //rs: Can ban/tim nguoi/cung cap, rk: Can mua/tim viec/can tim, ru: Cho thue, rh: Can thue
-			condition: "condition_ad_used", //condition_ad_used: Da su dung, condition_ad_new: Moi
-			post_time: ""
-		}
+	$scope.updateAccount = function() {
+		$http.post("http://localhost:3000/api/account/update", {
+			data: $scope.account
+		}).success(function(result) {
+			if (!$scope.account._id) {
+				$scope.account_list.push(result);
+				$scope.account = result;
+				$scope.accountSelect($scope.account);
+			}
+		});
 	};
-
+	$scope.newAccount = function(acc) {
+		$scope.saveAccount = $scope.account;
+		$scope.account = acc || {};
+	};
+	$scope.cancelCreateAccount = function() {
+		$scope.account = $scope.saveAccount;
+	};
+	$scope.reset = function() {
+		$scope.post = JSON.parse(JSON.stringify($scope.postTemp));
+	};
 	$scope.selectPost = function(post) {
 		$scope.post = post;
+		$scope.regionSelect();
+		$scope.category_groupSelect();
 	};
 
 	$scope.delete = function(id) {
@@ -217,15 +241,34 @@ app.controller('myCtrl', function($scope, $http) {
 			});
 	};
 
+	$scope.deleteAccount = function(id) {
+		$http.get("/api/account/delete/" + id)
+			.success(function() {
+				$scope.account_list = _.reject($scope.account_list, function(elm) {
+					return elm._id === id;
+				});
+				if ($scope.account_list.length > 0) {
+					$scope.account = $scope.account_list[0];
+					$http.post("/api/post/get/" + $scope.account.phone)
+						.success(function(post_list) {
+							$scope.post_list = post_list;
+						});
+				}
+			});
+	};
+
 	$scope.clone = function(post) {
 		$scope.post = JSON.parse(JSON.stringify(post));
 		delete $scope.post._id;
 		$scope.done();
 	};
-
-	$http.post("/api/post/get")
-		.success(function(post_list) {
-			$scope.post_list = post_list;
+	$http.post("/api/account/get")
+		.success(function(account_list) {
+			$scope.account_list = account_list;
+			if ($scope.account_list.length > 0) {
+				$scope.account = $scope.account_list[0];
+				$scope.accountSelect($scope.account);
+			}
 		});
 }).directive("file", [function() {
 	return {
@@ -248,6 +291,14 @@ app.controller('myCtrl', function($scope, $http) {
 			date.getMinutes() + ":" +
 			date.getSeconds();
 	};
+}).filter("stime", function() {
+	return function(time) {
+		var date = new Date(time);
+		var h = date.getHours();
+		var m = date.getMinutes();
+		return (h < 10 ? ("0" + h) : h) + ":" +
+			(m < 10 ? ("0" + m) : m);
+	};
 }).filter("show", function() {
 	return function(key, post) {
 		try {
@@ -257,9 +308,23 @@ app.controller('myCtrl', function($scope, $http) {
 				return true;
 			}
 			return false;
-		}
-		catch (ex) {
+		} catch (ex) {
 			return false;
 		}
 	};
+}).filter("posttime", function() {
+	return function(post_times) {
+		var result = "";
+		if (Array.isArray(post_times)) {
+			post_times.forEach(function(elm) {
+				if (result) {
+					result += ", ";
+				}
+				result += elm;
+			});
+			return result;
+		} else {
+			return post_times;
+		}
+	}
 });
