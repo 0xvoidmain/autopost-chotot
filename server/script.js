@@ -1,5 +1,6 @@
 function getImage(id, name) {
 	var xhr = new XMLHttpRequest();
+	name = name.replace(/\\/g, '/');
 	xhr.open('GET', 'http://localhost:3000/image/' + btoa(name));
 	xhr.responseType = 'blob';
 	xhr.onload = function() {
@@ -166,12 +167,7 @@ function checkDone(images, callback) {
 	}
 };
 
-getPost(function(post) {
-	if (!post) {
-		alert('Finish!');
-		return
-	}
-	post = JSON.parse(post);
+function execute(post) {
 	var url = location.toString();
 	if (url.trim() === 'http://www.chotot.vn/') {
 		$('#sunny_post_newad_homepage').click();
@@ -202,10 +198,37 @@ getPost(function(post) {
 			var xhr = new XMLHttpRequest();
 			xhr.open('GET', 'http://localhost:3000/api/post/done/' + post._id + "_" + post.pmin.t);
 			xhr.onload = function() {
-				//alert('done');
-				//$('#ai_preview_submit').click();
+				$('#ai_preview_submit').click();
 			};
 			xhr.send();
 		}, 500);
 	}
-});
+}
+
+function loop() {
+	getPost(function(post) {
+		if (!post) {
+			setTimeout(function() {
+				loop();
+			}, 10000);
+			return;
+		}
+		try {
+			var current = new Date();
+			post = JSON.parse(post);
+			if (current.getTime() > post.pmin.t) {
+				execute(post);
+			} else {
+				setTimeout(function() {
+					loop();
+				}, 10000);
+				return;
+			}
+		}
+		catch (ex) {
+			
+		}
+	});
+}
+
+loop();

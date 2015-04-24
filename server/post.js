@@ -55,11 +55,18 @@ post.done = function(id_time, callback) {
 		var post = _db.post.findOne({
 			_id: id
 		});
+		var count = 0;
 		for (var i = 0; i < post.post_times.length; i++) {
 			if (post.post_times[i].t == time) {
 				post.post_times[i].p = true;
-				break;
 			}
+
+			if (post.post_times[i].m && !post.post_times[i].p) {
+				count++;
+			}
+		}
+		if (count == 0) {
+			post.posted = true;
 		}
 		_db.post.update({
 			_id: id

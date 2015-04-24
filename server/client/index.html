@@ -48,9 +48,9 @@
 			<button style="position: absolute; top: 3px; right: 50px;" type="button" class="btn btn-default glyphicon glyphicon-pencil" data-toggle="modal" data-target="#myModal" ng-click="newAccount(account)"></button>
 		</div>
 
-		<div class="col-md-3" style="margin-top: 10px;">
+		<div class="col-md-3">
 			<button type="button" class="btn btn-primary" ng-click="reset()">Tạo mới</button>
-			<div class="post-item" style="position: relative; border-bottom: 1px solid gray; padding: 10px;" ng-class="{'active':p == post}" ng-repeat="p in post_list">
+			<div class="post-item" style="position: relative; border-bottom: 1px solid gray; padding: 7px;" ng-class="{'active':p == post}" ng-repeat="p in post_list">
 				<div ng-click="selectPost(p)" style="margin-right: 20px;" >
 					<div class="uppercase" ng-class="{'blue':p.posted, 'red':!p.posted}">{{p.subject === "" ? "(No subject)" : p.subject}}</div>
 					<div>{{p.create_time | time}}</div>
@@ -59,14 +59,17 @@
 				<button style="position: absolute; bottom: 5px; right: 5px;" type="button" class="btn btn-default btn-xs" ng-click="clone(p)">C</button>
 			</div>
 		</div>
-		<div class="form-horizontal col-md-9" style="overflow: auto; height: calc(100vh - 60px); margin-top: 10px;">
+		<div class="form-horizontal col-md-9" style="overflow: auto; height: calc(100vh - 60px);">
 			<div class="form-group">
 				<label class="col-sm-3 control-label">Thời gian post:</label>
 				<div class="col-sm-9">
 					<div>
-						<label class="btn btn-primary" ng-class="{active: t.p}" style="border-radius: 0px" ng-repeat="t in post.post_times" ng-show="t.m">
-							{{t.t | stime}}
+						<label class="btn btn-primary" ng-class="{active: post.post_times[0].m}" ng-click="setPostNow()" style="border-radius: 0px">
+							Đăng ngay
 						</label>
+						<label class="btn btn-primary" ng-class="{active: t.p}" style="border-radius: 0px" ng-repeat="t in post.post_times" ng-hide="!t.m || $index == 0">
+							{{t.t | stime}}
+						</label>						
 						<label class="btn btn-primary" style="border-radius: 0px" data-toggle="modal" data-target="#timePost">
 							...
 						</label>
@@ -89,22 +92,14 @@
 					</select>
 				</div>
 			</div>
-			<div class="form-group" ng-show="'area' | show:post">
-				<label class="col-sm-3 control-label">Tỉnh:</label>
-				<div class="col-sm-9">
-					<select class="form-control" ng-options="province.id as province.name for province in provinces | orderBy:'name'" ng-model="post.area">
-						<option value="">«Chọn tỉnh</option>
-					</select>
-				</div>
-			</div>
 			<div class="form-group">
 				<label class="col-sm-3 control-label">Bạn là:</label>
 				<div class="col-sm-9">
 					<label class="radio-inline">
-						<input type="radio" ng-model="post.seller_type" name="youare" value="p_ad"> Cá nhân
+						<input ng-change="done()" type="radio" ng-model="post.seller_type" name="youare" value="p_ad"> Cá nhân
 					</label>
 					<label class="radio-inline">
-						<input type="radio" ng-model="post.seller_type" name="youare" value="c_ad"> Công ty
+						<input ng-change="done()" type="radio" ng-model="post.seller_type" name="youare" value="c_ad"> Công ty
 					</label>
 				</div>
 			</div>
@@ -112,25 +107,33 @@
 				<label class="col-sm-3 control-label">Bạn đăng tin:</label>
 				<div class="col-sm-9">
 					<label class="radio-inline" ng-repeat="pt in postTypes">
-						<input type="radio" ng-model="post.type" name="posttype" value="r{{pt.key}}"> {{pt.label}}
+						<input ng-change="done()" type="radio" ng-model="post.type" name="posttype" value="r{{pt.key}}"> {{pt.label}}
 					</label>
+				</div>
+			</div>
+			<div class="form-group" ng-show="'area' | show:post">
+				<label class="col-sm-3 control-label">Tỉnh:</label>
+				<div class="col-sm-9">
+					<select ng-change="done()" class="form-control" ng-options="province.id as province.name for province in provinces | orderBy:'name'" ng-model="post.area">
+						<option value="">«Chọn tỉnh</option>
+					</select>
 				</div>
 			</div>
 			<div class="form-group">
 				<label class="col-sm-3 control-label">Tình trạng:</label>
 				<div class="col-sm-9">
 					<label class="radio-inline">
-						<input type="radio" ng-model="post.condition" name="condition" value="condition_ad_used"> Đã sử dụng
+						<input ng-change="done()" type="radio" ng-model="post.condition" name="condition" value="condition_ad_used"> Đã sử dụng
 					</label>
 					<label class="radio-inline">
-						<input type="radio" ng-model="post.condition" name="condition" value="condition_ad_new"> Mới
+						<input ng-change="done()" type="radio" ng-model="post.condition" name="condition" value="condition_ad_new"> Mới
 					</label>
 				</div>
 			</div>
 			<div class="form-group" ng-show="'regdate' | show:post">
 				<label class="col-sm-3 control-label">Năm đăng ký:</label>
 				<div class="col-sm-9">
-					<select class="form-control" ng-model="post.regdate" ng-options="reg.value as reg.label for reg in regdates">
+					<select ng-change="done()" class="form-control" ng-model="post.regdate" ng-options="reg.value as reg.label for reg in regdates">
 						<option value="">«Chọn năm đăng ký»</option>
 					</select>
 				</div>
@@ -138,7 +141,7 @@
 			<div class="form-group" ng-show="'mileage' | show:post">
 				<label class="col-sm-3 control-label">Số Km đã đi:</label>
 				<div class="col-sm-9">
-					<select class="form-control" ng-model="post.mileage" ng-options="mil.value as mil.label for mil in mileages">
+					<select ng-change="done()" class="form-control" ng-model="post.mileage" ng-options="mil.value as mil.label for mil in mileages">
 						<option value="">«Chọn số km đã đi»</option>					 
 					</select>
 				</div>
@@ -146,7 +149,7 @@
 			<div class="form-group" ng-show="'gearbox' | show:post">
 				<label class="col-sm-3 control-label">Hộp số:</label>
 				<div class="col-sm-9">
-					<select class="form-control" ng-model="post.gearbox" ng-options="gear.value as gear.label for gear in gearboxes">
+					<select ng-change="done()" class="form-control" ng-model="post.gearbox" ng-options="gear.value as gear.label for gear in gearboxes">
 						<option value="">«Chọn hộp số»</option>					 
 					</select>
 				</div>
@@ -154,7 +157,7 @@
 			<div class="form-group" ng-show="'fuel' | show:post">
 				<label class="col-sm-3 control-label">Loại nhiên liệu:</label>
 				<div class="col-sm-9">
-					<select class="form-control" ng-model="post.fuel" ng-options="fuel.value as fuel.label for fuel in fuels">
+					<select ng-change="done()" class="form-control" ng-model="post.fuel" ng-options="fuel.value as fuel.label for fuel in fuels">
 						<option value="">«Chọn loại nhiên liệu»</option>					 
 					</select>
 				</div>
@@ -162,19 +165,19 @@
 			<div class="form-group" ng-show="'address' | show:post">
 				<label class="col-sm-3 control-label">Địa chỉ:</label>
 				<div class="col-sm-9">
-					<input class="form-control" ng-model="post.address">
+					<input ng-blur="done()" class="form-control" ng-model="post.address">
 				</div>
 			</div>
 			<div class="form-group" ng-show="'size' | show:post">
 				<label class="col-sm-3 control-label">Diện tích:</label>
 				<div class="col-sm-9">
-					<input class="form-control" ng-model="post.size">
+					<input ng-blur="done()" class="form-control" ng-model="post.size">
 				</div>
 			</div>
 			<div class="form-group" ng-show="'rooms' | show:post">
 				<label class="col-sm-3 control-label">Số phòng:</label>
 				<div class="col-sm-9">
-					<select class="form-control" ng-model="post.rooms" ng-options="room.value as room.label for room in roomses">
+					<select ng-change="done()" class="form-control" ng-model="post.rooms" ng-options="room.value as room.label for room in roomses">
 						<option value="">«Chọn»</option>					 
 					</select>
 				</div>
@@ -182,68 +185,62 @@
 			<div class="form-group">
 				<label class="col-sm-3 control-label">Tựa đề:</label>
 				<div class="col-sm-9">
-					<input class="form-control" ng-model="post.subject">
+					<input ng-blur="done()" class="form-control" ng-model="post.subject">
 				</div>
 			</div>
 			<div class="form-group">
 				<label class="col-sm-3 control-label">Nội dung:</label>
 				<div class="col-sm-9">
-					<input class="form-control" ng-model="post.body">
+					<input ng-blur="done()" class="form-control" ng-model="post.body">
 				</div>
 			</div>
 			<div class="form-group">
 				<label class="col-sm-3 control-label">Giá:</label>
 				<div class="col-sm-9">
-					<input class="form-control" ng-model="post.price">
+					<input ng-blur="done()" class="form-control" ng-model="post.price">
 				</div>
 			</div>
 			<div class="form-group">
 				<label class="col-sm-3 control-label">Quy trình:</label>
 				<div class="col-sm-9">
-					<input class="form-control" ng-model="post.payment_delivery">
+					<input ng-blur="done()" class="form-control" ng-model="post.payment_delivery">
 				</div>
 			</div>
 			<!--  -->
 			<div class="form-group">
 				<label class="col-sm-3 control-label">Hình 1:</label>
 				<div class="col-sm-9">
-					<input class="form-control" ng-model="post.image_0">
+					<input class="form-control" placeholder="Đường dẫn không được chứa các ký tự đặc biệt hoặc tiếng việt có dấu" ng-model="post.image_0">
 				</div>
 			</div>
 			<div class="form-group">
 				<label class="col-sm-3 control-label">Hình 2:</label>
 				<div class="col-sm-9">
-					<input class="form-control" ng-model="post.image_1">
+					<input class="form-control" placeholder="Đường dẫn không được chứa các ký tự đặc biệt hoặc tiếng việt có dấu" ng-model="post.image_1">
 				</div>
 			</div>
 			<div class="form-group">
 				<label class="col-sm-3 control-label">Hình 3:</label>
 				<div class="col-sm-9">
-					<input class="form-control" ng-model="post.image_2">
+					<input class="form-control" placeholder="Đường dẫn không được chứa các ký tự đặc biệt hoặc tiếng việt có dấu" ng-model="post.image_2">
 				</div>
 			</div>
 			<div class="form-group">
 				<label class="col-sm-3 control-label">Hình 4:</label>
 				<div class="col-sm-9">
-					<input class="form-control" ng-model="post.image_3">
+					<input class="form-control" placeholder="Đường dẫn không được chứa các ký tự đặc biệt hoặc tiếng việt có dấu" ng-model="post.image_3">
 				</div>
 			</div>
 			<div class="form-group">
 				<label class="col-sm-3 control-label">Hình 5:</label>
 				<div class="col-sm-9">
-					<input class="form-control" ng-model="post.image_4">
+					<input class="form-control" placeholder="Đường dẫn không được chứa các ký tự đặc biệt hoặc tiếng việt có dấu" ng-model="post.image_4">
 				</div>
 			</div>
 			<div class="form-group">
 				<label class="col-sm-3 control-label">Hình 6:</label>
 				<div class="col-sm-9">
-					<input class="form-control" ng-model="post.image_5">
-				</div>
-			</div>
-			<div class="form-group">
-				<label class="col-sm-3 control-label"></label>
-				<div class="col-sm-9">
-					<button type="button" class="btn btn-primary" ng-click="done()">Hoàn thành</button>
+					<input class="form-control" placeholder="Đường dẫn không được chứa các ký tự đặc biệt hoặc tiếng việt có dấu" ng-model="post.image_5">
 				</div>
 			</div>
 			<br/>
@@ -299,12 +296,12 @@
 			<div class="modal-dialog">
 				<div class="modal-content">
 					<div class="modal-header">
-						<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-						<h4 class="modal-title" id="myModalLabel">Thông tin liên hệ</h4>
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true" ng-click="done()">&times;</span></button>
+						<h4 class="modal-title" id="myModalLabel">Thời gian đăng bài</h4>
 					</div>
 					<div class="modal-body form-horizontal">
 						<div style="margin-left: 10px;">
-							<label class="btn btn-primary" ng-class="{active: e.m}" style="border-radius: 0px" ng-repeat="e in post.post_times">
+							<label ng-hide="$index==0" class="btn btn-primary" ng-class="{active: e.m}" style="border-radius: 0px" ng-repeat="e in post.post_times">
 								<input style="width: 0px" type="checkbox" ng-model="e.m">{{e.t | stime}}
 							</label>
 						</div>

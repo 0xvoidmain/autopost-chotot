@@ -147,14 +147,13 @@ app.get('/api/account/delete/:id', function(req, res) {
 
 app.use('/client', express.static(__dirname + '/client'));
 
-var key = fs.readFileSync('./ssl/key.pem');
-var cert = fs.readFileSync('./ssl/key.crt')
-var credentials = {
-	key: key,
-	cert: cert
-};
+// var key = fs.readFileSync('./ssl/key.pem');
+// var cert = fs.readFileSync('./ssl/key.crt')
+// var credentials = {
+// 	key: key,
+// 	cert: cert
+// };
 var httpServer = http.createServer(app);
-var httpsServer = https.createServer(credentials, app);
 
 httpServer.listen(3000);
-httpsServer.listen(3300);
+// httpsServer.listen(3300);

@@ -26,17 +26,21 @@ app.controller('myCtrl', function($scope, $http) {
 		image_4: "",
 		image_5: "",
 		payment_delivery: "",
-
 		//custom fields
 		seller_type: "p_ad", //p_ad: Ca nhan, c_ad: Cong ty
 		type: "", //rs: Can ban/tim nguoi/cung cap, rk: Can mua/tim viec/can tim, ru: Cho thue, rh: Can thue
 		condition: "condition_ad_used", //condition_ad_used: Da su dung, condition_ad_new: Moi
+		postNow: false,
 		post_times: (function() {
 			var result = [];
 			var current = new Date();
 			current.setHours(0);
 			current.setMinutes(30);
 			current.setSeconds(0);
+			result.push({
+				t: current.getTime(),
+				m: false
+			});
 			while (current.getHours() < 23) {
 				current = new Date(current.getTime() + 1800000);
 				result.push({
@@ -169,16 +173,21 @@ app.controller('myCtrl', function($scope, $http) {
 				$scope.post_list = post_list;
 			});
 	};
-	$scope.regionSelect = function() {
-		$scope.provinces = _.find($scope.regions, function(elm) {
+	$scope.regionSelect = function(noDone) {
+		var findRegion = _.find($scope.regions, function(elm) {
 			return elm.id == $scope.post.region;
-		}).municipality;
-		$scope.provinces = _.map($scope.provinces, function(elm) {
-			elm.id = parseInt(elm.id);
-			return elm;
 		});
+		if (findRegion) {
+			$scope.provinces = _.map(findRegion.municipality, function(elm) {
+				elm.id = parseInt(elm.id);
+				return elm;
+			});
+		}
+		if (!noDone) {
+			$scope.done();
+		}
 	};
-	$scope.category_groupSelect = function() {
+	$scope.category_groupSelect = function(noDone) {
 		$scope.postTypes = [];
 		var postTypes = category_typeList[$scope.post.category_group];
 		for (var key in postTypes) {
@@ -187,8 +196,8 @@ app.controller('myCtrl', function($scope, $http) {
 				label: postTypes[key]
 			});
 		}
-		if ($scope.postTypes.length > 0) {
-			$scope.post.type = 'r' + $scope.postTypes[0].key;
+		if (!noDone) {
+			$scope.done();
 		}
 	};
 	$scope.done = function() {
@@ -232,12 +241,20 @@ app.controller('myCtrl', function($scope, $http) {
 		$scope.category_groupSelect();
 	};
 
+	$scope.setPostNow = function() {
+		$scope.post.post_times[0].m = !$scope.post.post_times[0].m;
+		$scope.done();
+	};
+
 	$scope.delete = function(id) {
 		$http.get("/api/post/delete/" + id)
 			.success(function() {
 				$scope.post_list = _.reject($scope.post_list, function(elm) {
 					return elm._id === id;
 				});
+				if (id == $scope.post._id) {
+					$scope.reset();
+				}
 			});
 	};
 
@@ -258,7 +275,12 @@ app.controller('myCtrl', function($scope, $http) {
 	};
 
 	$scope.clone = function(post) {
-		$scope.post = JSON.parse(JSON.stringify(post));
+		var post = JSON.parse(JSON.stringify($scope.post));
+		post.post_times.forEach(function(elm) {
+			delete elm['$$hashKey'];
+			delete elm.p;
+		});
+		$scope.post = post;
 		delete $scope.post._id;
 		$scope.done();
 	};
