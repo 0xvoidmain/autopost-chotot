@@ -5,10 +5,12 @@
 	<title>Chotot auto post</title>
 	<link rel="stylesheet" type="text/css" href="bower_components/bootstrap/dist/css/bootstrap-theme.min.css">
 	<link rel="stylesheet" type="text/css" href="bower_components/bootstrap/dist/css/bootstrap.min.css">
+	<link rel="stylesheet" type="text/css" href="bower_components/angular-loading-bar/build/loading-bar.min.css">
 	<script type="text/javascript" src="bower_components/jquery/dist/jquery.min.js"></script>
 	<script type="text/javascript" src="bower_components/angular/angular.min.js"></script>
 	<script type="text/javascript" src="bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
 	<script type="text/javascript" src="bower_components/underscore/underscore-min.js"></script>
+	<script type="text/javascript" src="bower_components/angular-loading-bar/build/loading-bar.min.js"></script>
 
 	<script type="text/javascript" src="scripts/data.js"></script>
 	<script type="text/javascript" src="scripts/main.js"></script>
@@ -33,6 +35,20 @@
 	}
 	.active {
 		background: rgb(230, 230, 230);
+	}
+	.uploadimage {
+		border: 1px solid gray;
+		border-radius: 5px;
+		float: left;
+		margin: 5px;
+		padding: 5px;
+	}
+	.uploadimage:hover {
+		background: rgb(228, 228, 228);
+		cursor: pointer;
+	}
+	.h:hover {
+		cursor: pointer;
 	}
 	</style>
 </head>
@@ -206,44 +222,53 @@
 					<input ng-blur="done()" class="form-control" ng-model="post.payment_delivery">
 				</div>
 			</div>
-			<!--  -->
 			<div class="form-group">
-				<label class="col-sm-3 control-label">Hình 1:</label>
+				<label class="col-sm-3 control-label">Hình ảnh:</label>
 				<div class="col-sm-9">
-					<input class="form-control" placeholder="Đường dẫn không được chứa các ký tự đặc biệt hoặc tiếng việt có dấu" ng-model="post.image_0">
+					<div class="uploadimage">
+						<label for="image_0">
+							<img class="h" height="100px" width="100px" ng-src="../image/{{post.image_0 || 'upload.png'}}"/>
+						</label>
+						<input id="image_0" style="display: none" type="file" name="userPhoto" accept="image/*" onchange="angular.element(this).scope().fileChanged(this)">
+						</input>
+					</div>
+					<div class="uploadimage">
+						<label for="image_1">
+							<img class="h" height="100px" width="100px" ng-src="../image/{{post.image_1 || 'upload.png'}}"/>
+						</label>
+						<input id="image_1" style="display: none" type="file" name="userPhoto" accept="image/*" onchange="angular.element(this).scope().fileChanged(this)">
+						</input>
+					</div>
+					<div class="uploadimage">
+						<label for="image_2">
+							<img class="h" height="100px" width="100px" ng-src="../image/{{post.image_2 || 'upload.png'}}"/>
+						</label>
+						<input id="image_2" style="display: none" type="file" name="userPhoto" accept="image/*" onchange="angular.element(this).scope().fileChanged(this)">
+						</input>
+					</div>
+					<div class="uploadimage">
+						<label for="image_3">
+							<img class="h" height="100px" width="100px" ng-src="../image/{{post.image_3 || 'upload.png'}}"/>
+						</label>
+						<input id="image_3" style="display: none" type="file" name="userPhoto" accept="image/*" onchange="angular.element(this).scope().fileChanged(this)">
+						</input>
+					</div>
+					<div class="uploadimage">
+						<label for="image_4">
+							<img class="h" height="100px" width="100px" ng-src="../image/{{post.image_4 || 'upload.png'}}"/>
+						</label>
+						<input id="image_4" style="display: none" type="file" name="userPhoto" accept="image/*" onchange="angular.element(this).scope().fileChanged(this)">
+						</input>
+					</div>
+					<div class="uploadimage">
+						<label for="image_5">
+							<img class="h" height="100px" width="100px" ng-src="../image/{{post.image_5 || 'upload.png'}}"/>
+						</label>
+						<input id="image_5" style="display: none" type="file" name="userPhoto" accept="image/*" onchange="angular.element(this).scope().fileChanged(this)">
+						</input>
+					</div>
 				</div>
-			</div>
-			<div class="form-group">
-				<label class="col-sm-3 control-label">Hình 2:</label>
-				<div class="col-sm-9">
-					<input class="form-control" placeholder="Đường dẫn không được chứa các ký tự đặc biệt hoặc tiếng việt có dấu" ng-model="post.image_1">
-				</div>
-			</div>
-			<div class="form-group">
-				<label class="col-sm-3 control-label">Hình 3:</label>
-				<div class="col-sm-9">
-					<input class="form-control" placeholder="Đường dẫn không được chứa các ký tự đặc biệt hoặc tiếng việt có dấu" ng-model="post.image_2">
-				</div>
-			</div>
-			<div class="form-group">
-				<label class="col-sm-3 control-label">Hình 4:</label>
-				<div class="col-sm-9">
-					<input class="form-control" placeholder="Đường dẫn không được chứa các ký tự đặc biệt hoặc tiếng việt có dấu" ng-model="post.image_3">
-				</div>
-			</div>
-			<div class="form-group">
-				<label class="col-sm-3 control-label">Hình 5:</label>
-				<div class="col-sm-9">
-					<input class="form-control" placeholder="Đường dẫn không được chứa các ký tự đặc biệt hoặc tiếng việt có dấu" ng-model="post.image_4">
-				</div>
-			</div>
-			<div class="form-group">
-				<label class="col-sm-3 control-label">Hình 6:</label>
-				<div class="col-sm-9">
-					<input class="form-control" placeholder="Đường dẫn không được chứa các ký tự đặc biệt hoặc tiếng việt có dấu" ng-model="post.image_5">
-				</div>
-			</div>
-			<br/>
+			</div>		
 		</div>
 		<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 			<div class="modal-dialog">

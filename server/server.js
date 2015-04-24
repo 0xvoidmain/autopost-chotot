@@ -3,13 +3,14 @@ var fs = require('fs');
 var app = express();
 var http = require('http');
 var https = require('https');
+var multer = require('multer');
 var post = require('./post.js');
 var account = require('./account.js');
 var bodyParser = require('body-parser');
 
 http.ServerResponse.prototype.respond = function(content, status) {
 	if ('undefined' == typeof status) { // only one parameter found
-		if ('number' == typeof content || !isNaN(parseInt(content, 10))) { // usage "respond(status)"
+		if ('number' == typeof content) { // usage "respond(status)"
 			status = parseInt(content, 10);
 			content = undefined;
 		} else { // usage "respond(content)"
@@ -29,6 +30,26 @@ http.ServerResponse.prototype.respond = function(content, status) {
 	this.setHeader("Expires", 0);
 	this.send(content, status);
 };
+app.use(multer({
+	dest: './images/',
+	rename: function(fieldname, filename) {
+		console.log('rename');
+		return Date.now();
+	},
+	onFileUploadStart: function(file) {
+		console.log('uploading....')
+	},
+	onFileUploadComplete: function(file) {
+		console.log('completed')
+	}
+}));
+app.post('/api/photoupload', function(req, res) {
+	console.log('end');
+	console.log(req.files);
+	res.respond({
+		name: req.files.file.name
+	});
+});
 
 app.use(bodyParser.json({
 	limit: '50mb'
@@ -47,8 +68,7 @@ app.all('*', function(req, res, next) {
 });
 
 app.get('/image/:name', function(req, res) {
-	var b64string = req.params.name;
-	var filePath = new Buffer(b64string, 'base64').toString();
+	var filePath = "./images/" + req.params.name;
 	var stat = fs.statSync(filePath);
 
 	res.writeHead(200, {
@@ -92,7 +112,9 @@ app.post('/api/post/update', function(req, res) {
 });
 
 app.post('/api/post/get/:phone', function(req, res) {
-	post.get({phone: req.params.phone}, function(result) {
+	post.get({
+		phone: req.params.phone
+	}, function(result) {
 		res.respond(result);
 	});
 });
@@ -146,14 +168,16 @@ app.get('/api/account/delete/:id', function(req, res) {
 });
 
 app.use('/client', express.static(__dirname + '/client'));
-
+app.listen(3000, function() {
+	console.log("Working on port 3000");
+});
 // var key = fs.readFileSync('./ssl/key.pem');
 // var cert = fs.readFileSync('./ssl/key.crt')
 // var credentials = {
 // 	key: key,
 // 	cert: cert
 // };
-var httpServer = http.createServer(app);
+// var httpServer = http.createServer(app);
 
-httpServer.listen(3000);
+// httpServer.listen(3000);
 // httpsServer.listen(3300);

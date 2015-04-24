@@ -1,7 +1,6 @@
 function getImage(id, name) {
 	var xhr = new XMLHttpRequest();
-	name = name.replace(/\\/g, '/');
-	xhr.open('GET', 'http://localhost:3000/image/' + btoa(name));
+	xhr.open('GET', 'http://localhost:3000/image/' + name);
 	xhr.responseType = 'blob';
 	xhr.onload = function() {
 		var blob = xhr.response;

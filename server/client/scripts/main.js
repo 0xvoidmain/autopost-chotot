@@ -1,4 +1,4 @@
-var app = angular.module('myApp', []);
+var app = angular.module('myApp', ['angular-loading-bar']);
 app.controller('myCtrl', function($scope, $http) {
 	$scope.postTemp = {
 		name: "",
@@ -283,6 +283,26 @@ app.controller('myCtrl', function($scope, $http) {
 		$scope.post = post;
 		delete $scope.post._id;
 		$scope.done();
+	};
+	$scope.fileChanged = function(element) {
+		$scope.$apply(function() {
+			var file = element.files[0];
+			var fd = new FormData();
+			fd.append('file', file);
+			$http.post("/api/photoupload", fd, {
+					transformRequest: angular.identity,
+					headers: {
+						'Content-Type': undefined
+					}
+				})
+				.success(function(result) {
+					$scope.post[element.id] = result.name;
+					$scope.done();
+				})
+				.error(function() {
+					alert("Không thể đăng ảnh này!");
+				});
+		});
 	};
 	$http.post("/api/account/get")
 		.success(function(account_list) {
